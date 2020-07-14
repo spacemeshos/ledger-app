@@ -3,16 +3,12 @@
 
 #include "getVersion.h"
 #include "stream.h"
-//#include "getPublicKey.h"
+#include "getExtendedPublicKey.h"
 //#include "signTx.h"
-
-typedef struct {
-	stream_t s;
-} ins_tests_context_t;
 
 typedef union {
 	// Here should go states of all instructions
-//	ins_get_pubkey_context_t extPubKeyContext;
+	ins_get_ext_pubkey_context_t extPubKeyContext;
 //	ins_sign_tx_context_t signTxContext;
 } instructionState_t;
 

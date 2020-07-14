@@ -190,24 +190,22 @@ static void spacemesh_main(void)
 	}
 }
 
-
 // Everything below this point is Ledger magic. And the magic isn't well-
 // documented, so if you want to understand it, you'll need to read the
 // source, which you can find in the nanos-secure-sdk repo. Fortunately, you
 // don't need to understand any of this in order to write an app.
 //
 
-
 static void app_exit(void)
 {
-	BEGIN_TRY_L(exit) {
-		TRY_L(exit) {
-			os_sched_exit(-1);
-		}
-		FINALLY_L(exit) {
-		}
-	}
-	END_TRY_L(exit);
+    BEGIN_TRY_L(exit) {
+        TRY_L(exit) {
+            os_sched_exit(-1);
+        }
+        FINALLY_L(exit) {
+        }
+    }
+    END_TRY_L(exit);
 }
 
 __attribute__((section(".boot"))) int main(void)
