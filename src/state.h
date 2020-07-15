@@ -2,14 +2,15 @@
 #define __SPACEMESH_APP_STATE_H__
 
 #include "getVersion.h"
-#include "stream.h"
 #include "getExtendedPublicKey.h"
+#include "getAddress.h"
 //#include "signTx.h"
 
 typedef union {
-	// Here should go states of all instructions
-	ins_get_ext_pubkey_context_t extPubKeyContext;
-//	ins_sign_tx_context_t signTxContext;
+    // Here should go states of all instructions
+    ins_get_ext_pubkey_context_t extPubKeyContext;
+    ins_get_address_context_t getAddressContext;
+//    ins_sign_tx_context_t signTxContext;
 } instructionState_t;
 
 // Note(instructions are uint8_t but we have a special INS_NONE value

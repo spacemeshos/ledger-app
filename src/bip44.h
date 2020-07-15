@@ -6,8 +6,8 @@
 static const uint32_t BIP44_MAX_PATH_LENGTH = 10;
 
 typedef struct {
-	uint32_t path[BIP44_MAX_PATH_LENGTH];
-	uint32_t length;
+    uint32_t path[BIP44_MAX_PATH_LENGTH];
+    uint32_t length;
 } bip44_path_t;
 
 
@@ -16,19 +16,19 @@ static const uint32_t SMESH_COIN_TYPE = 540;
 
 static const uint32_t HARDENED_BIP32 = ((uint32_t) 1 << 31);
 
-size_t bip44_parseFromWire(
+size_t bip44_parse(
         bip44_path_t* pathSpec,
         const uint8_t* dataBuffer, size_t dataSize
 );
 
 // Indexes into pathSpec
 enum {
-	BIP44_I_PURPOSE = 0,
-	BIP44_I_COIN_TYPE = 1,
-	BIP44_I_ACCOUNT = 2,
-	BIP44_I_CHAIN = 3,
-	BIP44_I_ADDRESS = 4,
-	BIP44_I_REST = 5,
+    BIP44_I_PURPOSE = 0,
+    BIP44_I_COIN_TYPE = 1,
+    BIP44_I_ACCOUNT = 2,
+    BIP44_I_CHAIN = 3,
+    BIP44_I_ADDRESS = 4,
+    BIP44_I_REST = 5,
 };
 
 

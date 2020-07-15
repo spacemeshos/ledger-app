@@ -5,8 +5,8 @@
 #include <stddef.h>
 
 enum {
-	STREAM_BUFFER_SIZE = 300u,
-	STREAM_INIT_MAGIC = 4247,
+    STREAM_BUFFER_SIZE = 300u,
+    STREAM_INIT_MAGIC = 4247,
 };
 
 typedef struct {

@@ -20,91 +20,92 @@ enum {
 };
 
 void getExtendedPublicKey_handleAPDU(
-        uint8_t p1,
-        uint8_t p2,
-        uint8_t *wireDataBuffer,
-        size_t wireDataSize,
-        bool isNewCall
+    uint8_t p1,
+    uint8_t p2,
+    uint8_t *data,
+    size_t dataSize,
+    bool isNewCall
 )
 {
-	// Initialize state
-	if (isNewCall) {
-		os_memset(ctx, 0, SIZEOF(*ctx));
-	}
-	ctx->responseReadyMagic = 0;
+    // Initialize state
+    if (isNewCall) {
+        os_memset(ctx, 0, SIZEOF(*ctx));
+    }
+    ctx->responseReadyMagic = 0;
 
-	// Validate params
-	VALIDATE(p1 == 0, ERR_INVALID_REQUEST_PARAMETERS);
-	VALIDATE(p2 == 0, ERR_INVALID_REQUEST_PARAMETERS);
+    // Validate params
+    VALIDATE(p1 == 0, ERR_INVALID_REQUEST_PARAMETERS);
+    VALIDATE(p2 == 0, ERR_INVALID_REQUEST_PARAMETERS);
 
-	// Parse wire
-	size_t parsedSize = bip44_parseFromWire(&ctx->pathSpec, wireDataBuffer, wireDataSize);
+    // Parse wire
+    size_t parsedSize = bip44_parse(&ctx->pathSpec, data, dataSize);
 
-	if (parsedSize != wireDataSize) {
-		THROW(ERR_INVALID_DATA);
-	}
+    if (parsedSize != dataSize) {
+        THROW(ERR_INVALID_DATA);
+    }
 
-	// Check security policy
-	security_policy_t policy = policyForGetExtendedPublicKey(&ctx->pathSpec);
-	ENSURE_NOT_DENIED(policy);
+    // Check security policy
+    security_policy_t policy = policyForGetExtendedPublicKey(&ctx->pathSpec);
+    ENSURE_NOT_DENIED(policy);
 
-	// Calculation
-	deriveExtendedPublicKey(
-	        & ctx->pathSpec,
-	        & ctx->extPubKey
-	);
-	ctx->responseReadyMagic = RESPONSE_READY_MAGIC;
+    // Calculation
+    deriveExtendedPublicKey(
+            & ctx->pathSpec,
+            & ctx->extPubKey
+    );
+    ctx->responseReadyMagic = RESPONSE_READY_MAGIC;
 
-	switch (policy) {
-#	define  CASE(policy, step) case policy: {ctx->ui_step = step; break;}
-		CASE(POLICY_PROMPT_WARN_UNUSUAL,    UI_STEP_WARNING);
-		CASE(POLICY_PROMPT_BEFORE_RESPONSE, UI_STEP_DISPLAY_PATH);
-		CASE(POLICY_ALLOW_WITHOUT_PROMPT,   UI_STEP_RESPOND);
-#	undef   CASE
-	default:
-		ASSERT(false);
-	}
-	getExtendedPublicKey_ui_runStep();
+    switch (policy) {
+#       define  CASE(policy, step) case policy: {ctx->ui_step = step; break;}
+        CASE(POLICY_PROMPT_WARN_UNUSUAL,    UI_STEP_WARNING);
+        CASE(POLICY_PROMPT_BEFORE_RESPONSE, UI_STEP_DISPLAY_PATH);
+        CASE(POLICY_ALLOW_WITHOUT_PROMPT,   UI_STEP_RESPOND);
+#       undef   CASE
+    default:
+        ASSERT(false);
+    }
+    getExtendedPublicKey_ui_runStep();
 }
 
 static void getExtendedPublicKey_ui_runStep()
 {
-	ui_callback_fn_t* this_fn = getExtendedPublicKey_ui_runStep;
+    ui_callback_fn_t* this_fn = getExtendedPublicKey_ui_runStep;
 
-	UI_STEP_BEGIN(ctx->ui_step);
+    UI_STEP_BEGIN(ctx->ui_step);
 
-	UI_STEP(UI_STEP_WARNING) {
-		ui_displayPaginatedText(
-		        "Unusual request",
-		        "Proceed with care",
-		        this_fn
-		);
-	}
-	UI_STEP(UI_STEP_DISPLAY_PATH) {
-		// Response
-		char pathStr[100];
-		bip44_printToStr(&ctx->pathSpec, pathStr, SIZEOF(pathStr) );
+    UI_STEP(UI_STEP_WARNING) {
+        ui_displayPaginatedText(
+            "Unusual request",
+            "Proceed with care",
+            this_fn
+        );
+    }
+    UI_STEP(UI_STEP_DISPLAY_PATH) {
+        // Response
+        char pathStr[100];
+        bip44_printToStr(&ctx->pathSpec, pathStr, SIZEOF(pathStr) );
 
-		ui_displayPaginatedText(
-		        "Export public key",
-		        pathStr,
-		        this_fn
-		);
-	}
-	UI_STEP(UI_STEP_CONFIRM) {
-		ui_displayPrompt(
-		        "Confirm export",
-		        "public key?",
-		        this_fn,
-		        respond_with_user_reject
-		);
-	}
-	UI_STEP(UI_STEP_RESPOND) {
-		ASSERT(ctx->responseReadyMagic == RESPONSE_READY_MAGIC);
+        ui_displayPaginatedText(
+            "Export public key",
+            pathStr,
+            this_fn
+        );
+    }
+    UI_STEP(UI_STEP_CONFIRM) {
+        ui_displayPrompt(
+            "Confirm export",
+            "public key?",
+            this_fn,
+            respond_with_user_reject
+        );
+    }
+    UI_STEP(UI_STEP_RESPOND) {
+        ASSERT(ctx->responseReadyMagic == RESPONSE_READY_MAGIC);
 
-		io_send_buf(SUCCESS, (uint8_t*) &ctx->extPubKey, SIZEOF(ctx->extPubKey));
-		ui_idle();
+        io_send_buf(SUCCESS, (uint8_t*) &ctx->extPubKey, SIZEOF(ctx->extPubKey));
+        ui_idle();
 
-	}
-	UI_STEP_END(UI_STEP_INVALID);
+    }
+
+    UI_STEP_END(UI_STEP_INVALID);
 }

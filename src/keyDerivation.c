@@ -9,9 +9,9 @@
 #include "endian.h"
 
 void derivePrivateKey(
-        const bip44_path_t* pathSpec,
-        chain_code_t* chainCode,
-        privateKey_t* privateKey
+    const bip44_path_t* pathSpec,
+    chain_code_t* chainCode,
+    privateKey_t* privateKey
 )
 {
     if (!bip44_hasValidSpacemeshPrefix(pathSpec)) {
@@ -52,15 +52,15 @@ void derivePrivateKey(
 }
 
 void deriveRawPublicKey(
-        const privateKey_t* privateKey,
-        cx_ecfp_public_key_t* publicKey
+    const privateKey_t* privateKey,
+    cx_ecfp_public_key_t* publicKey
 )
 {
     // We should do cx_ecfp_generate_pair here, but it does not work in SDK < 1.5.4,
     // should work with the new SDK
     io_seproxyhal_io_heartbeat();
     cx_eddsa_get_public_key(
-        // cx_eddsa has a special case struct for Cardano's private keys
+        // cx_eddsa has a special case struct for Spacemesh's private keys
         // but signature is standard
         (const struct cx_ecfp_256_private_key_s *) privateKey,
         CX_SHA512,
@@ -70,8 +70,8 @@ void deriveRawPublicKey(
 }
 
 void extractRawPublicKey(
-        const cx_ecfp_public_key_t* publicKey,
-        uint8_t* outBuffer, size_t outSize
+    const cx_ecfp_public_key_t* publicKey,
+    uint8_t* outBuffer, size_t outSize
 )
 {
     // copy public key little endian to big endian
@@ -90,8 +90,8 @@ void extractRawPublicKey(
 
 // pub_key + chain_code
 void deriveExtendedPublicKey(
-        const bip44_path_t* pathSpec,
-        extendedPublicKey_t* out
+    const bip44_path_t* pathSpec,
+    extendedPublicKey_t* out
 )
 {
     privateKey_t privateKey;

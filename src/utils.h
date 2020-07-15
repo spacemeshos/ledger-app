@@ -1,6 +1,9 @@
 #ifndef __SPACEMESH_APP_UTILS_H__
 #define __SPACEMESH_APP_UTILS_H__
 
+#include <stdint.h>
+#include <stddef.h>
+
 // Does not compile if x is pointer of some kind
 // See http://zubplot.blogspot.com/2015/01/gcc-is-wonderful-better-arraysize-macro.html
 #define ARRAY_NOT_A_PTR(x) \
@@ -68,5 +71,12 @@
 // #define UI_STEP_JUMP(NEXT_STEP) *__ui_step_ptr = NEXT_STEP; break;
 
 // *INDENT-ON*
+
+// bin2hex converts binary to hex and appends a final NUL byte.
+void bin2hex(char *dst, uint8_t *data, uint64_t inlen);
+
+// bin2dec converts an unsigned integer to a decimal string and appends a
+// final NUL byte. It returns the length of the string.
+int bin2dec(char *dst, uint64_t n);
 
 #endif // __SPACEMESH_APP_UTILS_H__

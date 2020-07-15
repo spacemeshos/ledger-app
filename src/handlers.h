@@ -6,8 +6,8 @@
 typedef void handler_fn_t(
         uint8_t p1,
         uint8_t p2,
-        uint8_t *wireBuffer,
-        size_t wireSize,
+        uint8_t *data,
+        size_t dataSize,
         bool isNewCall
 );
 

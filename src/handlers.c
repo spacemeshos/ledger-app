@@ -1,10 +1,11 @@
 #include <os_io_seproxyhal.h>
 #include <stdlib.h>
 
+#include "errors.h"
 #include "handlers.h"
 #include "getVersion.h"
 #include "getExtendedPublicKey.h"
-#include "errors.h"
+#include "getAddress.h"
 //#include "signTx.h"
 
 // The APDU protocol uses a single-byte instruction code (INS) to specify
@@ -19,6 +20,7 @@ handler_fn_t* lookupHandler(uint8_t ins)
 
         // 0x1* -  public-key/address related
         CASE(0x10, getExtendedPublicKey_handleAPDU);
+        CASE(0x11, getAddress_handleAPDU);
 
         // 0x2* -  signing-transaction related
 //        CASE(0x20, signTx_handleAPDU);
