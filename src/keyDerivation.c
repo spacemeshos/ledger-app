@@ -4,7 +4,6 @@
 #include "assert.h"
 #include "errors.h"
 #include "keyDerivation.h"
-#include "stream.h"
 #include "utils.h"
 #include "endian.h"
 
@@ -51,7 +50,7 @@ void derivePrivateKey(
     } END_TRY;
 }
 
-void deriveRawPublicKey(
+void getPublicKey(
     const privateKey_t* privateKey,
     cx_ecfp_public_key_t* publicKey
 )
@@ -110,7 +109,7 @@ void deriveExtendedPublicKey(
             // Pubkey part
             cx_ecfp_public_key_t publicKey;
 
-            deriveRawPublicKey(&privateKey, &publicKey);
+            getPublicKey(&privateKey, &publicKey);
 
             STATIC_ASSERT(SIZEOF(out->pubKey) == PUBLIC_KEY_SIZE, "bad pub key size");
 

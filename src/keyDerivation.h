@@ -31,7 +31,7 @@ void deriveExtendedPublicKey(
     extendedPublicKey_t* out
 );
 
-void deriveRawPublicKey(
+void getPublicKey(
     const privateKey_t* privateKey,
     cx_ecfp_public_key_t* publicKey // output
 );

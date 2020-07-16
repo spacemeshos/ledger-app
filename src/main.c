@@ -80,6 +80,8 @@ static void spacemesh_main(void)
     volatile size_t tx = 0;
     volatile uint8_t flags = 0;
 
+    STATIC_ASSERT(sizeof(int) == sizeof(size_t), "bad sizing");
+
     // Exchange APDUs until EXCEPTION_IO_RESET is thrown.
     for (;;) {
         // The Ledger SDK implements a form of exception handling. In addition

@@ -6,7 +6,7 @@
 #include "getVersion.h"
 #include "getExtendedPublicKey.h"
 #include "getAddress.h"
-//#include "signTx.h"
+#include "signTx.h"
 
 // The APDU protocol uses a single-byte instruction code (INS) to specify
 // which command should be executed. We'll use this code to dispatch on a
@@ -23,7 +23,7 @@ handler_fn_t* lookupHandler(uint8_t ins)
         CASE(0x11, getAddress_handleAPDU);
 
         // 0x2* -  signing-transaction related
-//        CASE(0x20, signTx_handleAPDU);
+        CASE(0x20, signTx_handleAPDU);
 #   undef   CASE
     default:
         return NULL;
