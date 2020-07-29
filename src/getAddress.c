@@ -41,8 +41,8 @@ static void getAddress_handleReturn(uint8_t p2, uint8_t* data, size_t dataSize)
     }
 
     // Check security policy
-    security_policy_t policy = policyForReturnAddress(&ctx->pathSpec);
-    ENSURE_NOT_DENIED(policy);
+//    security_policy_t policy = policyForReturnAddress(&ctx->pathSpec);
+//    ENSURE_NOT_DENIED(policy);
 
     deriveAddress(
         &ctx->pathSpec,
@@ -50,7 +50,7 @@ static void getAddress_handleReturn(uint8_t p2, uint8_t* data, size_t dataSize)
         SIZEOF(ctx->address)
     );
     ctx->responseReadyMagic = RESPONSE_READY_MAGIC;
-
+/*
     switch (policy) {
 #       define  CASE(POLICY, STEP) case POLICY: {ctx->ui_step=STEP; break;}
         CASE(POLICY_PROMPT_WARN_UNUSUAL,    RETURN_UI_STEP_WARNING);
@@ -60,6 +60,9 @@ static void getAddress_handleReturn(uint8_t p2, uint8_t* data, size_t dataSize)
     default:
         THROW(ERR_NOT_IMPLEMENTED);
     }
+*/
+
+    ctx->ui_step = RETURN_UI_STEP_PATH;
     getAddress_return_ui_runStep();
 }
 
@@ -133,8 +136,8 @@ static void getAddress_handleDisplay(uint8_t p2, uint8_t* data, size_t dataSize)
     }
 
     // Check security policy
-    security_policy_t policy = policyForShowAddress(&ctx->pathSpec);
-    ENSURE_NOT_DENIED(policy);
+//    security_policy_t policy = policyForShowAddress(&ctx->pathSpec);
+//    ENSURE_NOT_DENIED(policy);
 
     deriveAddress(
         &ctx->pathSpec,
@@ -142,7 +145,7 @@ static void getAddress_handleDisplay(uint8_t p2, uint8_t* data, size_t dataSize)
         SIZEOF(ctx->address)
     );
     ctx->responseReadyMagic = RESPONSE_READY_MAGIC;
-
+/*
     switch (policy) {
 #       define  CASE(policy, step) case policy: {ctx->ui_step=step; break;}
         CASE(POLICY_PROMPT_WARN_UNUSUAL,  DISPLAY_UI_STEP_WARNING);
@@ -151,6 +154,8 @@ static void getAddress_handleDisplay(uint8_t p2, uint8_t* data, size_t dataSize)
     default:
         THROW(ERR_NOT_IMPLEMENTED);
     }
+*/
+    ctx->ui_step = DISPLAY_UI_STEP_INSTRUCTIONS;
     getAddress_display_ui_runStep();
 }
 

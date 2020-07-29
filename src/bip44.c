@@ -39,7 +39,7 @@ bool bip44_hasValidSpacemeshPrefix(const bip44_path_t* pathSpec)
 #define CHECK(cond) if (!(cond)) return false
     const uint32_t HD = HARDENED_BIP32; // shorthand
     // Have at least account
-    CHECK(pathSpec->length > BIP44_I_COIN_TYPE);
+    CHECK(pathSpec->length > BIP44_I_ADDRESS);
 
     CHECK(pathSpec->path[BIP44_I_PURPOSE] == (BIP_44 | HD));
     CHECK(pathSpec->path[BIP44_I_COIN_TYPE] == (SMESH_COIN_TYPE | HD));
@@ -107,6 +107,9 @@ bool bip44_hasReasonableAddress(const bip44_path_t* pathSpec)
 {
     if (!bip44_containsAddress(pathSpec)) return false;
     uint32_t address = bip44_getAddressValue(pathSpec);
+    if (!isHardened(address)) return false;
+    // Un-harden
+    address = address & (~HARDENED_BIP32);
     return (address <= MAX_REASONABLE_ADDRESS);
 }
 
@@ -137,7 +140,7 @@ void bip44_printToStr(const bip44_path_t* pathSpec, char* out, size_t outSize)
 
     WRITE("m");
 
-    ASSERT(pathSpec->length < ARRAY_LEN(pathSpec->path));
+    ASSERT(pathSpec->length <= ARRAY_LEN(pathSpec->path));
 
     for (size_t i = 0; i < pathSpec->length; i++) {
         uint32_t value = pathSpec->path[i];

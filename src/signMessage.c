@@ -18,7 +18,7 @@ void signMessage(bip44_path_t* pathSpec,
 
     ASSERT(messageSize < BUFFER_SIZE_PARANOIA);
     ASSERT(signatureSize == 64);
-    ASSERT(signerSize == SPACEMESH_ADDRESS_SIZE);
+    ASSERT(signerSize == PUBLIC_KEY_SIZE);
 
     BEGIN_TRY {
         TRY {
@@ -32,16 +32,15 @@ void signMessage(bip44_path_t* pathSpec,
             extractRawPublicKey(&publicKey, pubKey, SIZEOF(pubKey));
 
             io_seproxyhal_io_heartbeat();
-            size_t signatureSize =
-                (size_t) cx_eddsa_sign(
-                    (const struct cx_ecfp_256_private_key_s*) &privateKey,
-                    0 /* mode */,
-                    CX_SHA512,
-                    message, messageSize,
-                    NULL /* ctx */, 0 /* ctx len */,
-                    signature, 64,
-                    0 /* info */
-                );
+            cx_eddsa_sign(
+                (const struct cx_ecfp_256_private_key_s*) &privateKey,
+                0 /* mode */,
+                CX_SHA512,
+                message, messageSize,
+                NULL /* ctx */, 0 /* ctx len */,
+                signature, 64,
+                0 /* info */
+            );
             io_seproxyhal_io_heartbeat();
 
             os_memmove(signer, pubKey, signerSize);

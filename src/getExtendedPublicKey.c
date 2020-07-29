@@ -45,16 +45,16 @@ void getExtendedPublicKey_handleAPDU(
     }
 
     // Check security policy
-    security_policy_t policy = policyForGetExtendedPublicKey(&ctx->pathSpec);
-    ENSURE_NOT_DENIED(policy);
+//    security_policy_t policy = policyForGetExtendedPublicKey(&ctx->pathSpec);
+//    ENSURE_NOT_DENIED(policy);
 
     // Calculation
     deriveExtendedPublicKey(
-            & ctx->pathSpec,
-            & ctx->extPubKey
+        & ctx->pathSpec,
+        & ctx->extPubKey
     );
     ctx->responseReadyMagic = RESPONSE_READY_MAGIC;
-
+/*
     switch (policy) {
 #       define  CASE(policy, step) case policy: {ctx->ui_step = step; break;}
         CASE(POLICY_PROMPT_WARN_UNUSUAL,    UI_STEP_WARNING);
@@ -64,6 +64,8 @@ void getExtendedPublicKey_handleAPDU(
     default:
         ASSERT(false);
     }
+*/
+    ctx->ui_step = UI_STEP_DISPLAY_PATH;
     getExtendedPublicKey_ui_runStep();
 }
 
@@ -83,7 +85,7 @@ static void getExtendedPublicKey_ui_runStep()
     UI_STEP(UI_STEP_DISPLAY_PATH) {
         // Response
         char pathStr[100];
-        bip44_printToStr(&ctx->pathSpec, pathStr, SIZEOF(pathStr) );
+        bip44_printToStr(&ctx->pathSpec, pathStr, SIZEOF(pathStr));
 
         ui_displayPaginatedText(
             "Export public key",
@@ -104,7 +106,6 @@ static void getExtendedPublicKey_ui_runStep()
 
         io_send_buf(SUCCESS, (uint8_t*) &ctx->extPubKey, SIZEOF(ctx->extPubKey));
         ui_idle();
-
     }
 
     UI_STEP_END(UI_STEP_INVALID);

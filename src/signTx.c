@@ -222,15 +222,19 @@ void signTx_handleAPDU(
 
     const uint8_t *encodedTx = data + pathSize;
 
-    tx_header_t *tx = (tx_header_t *)(data + pathSize);
+    const uint8_t *tx = data + pathSize;
 
-    ctx->tx.type = tx->type;
-    ctx->tx.nonce = u8be_read((const uint8_t *)&tx->nonce);
-    ctx->tx.gasLimit = u8be_read((const uint8_t *)&tx->gasLimit);
-    ctx->tx.gasPrice = u8be_read((const uint8_t *)&tx->gasPrice);
-    ctx->tx.amount = u8be_read((const uint8_t *)&tx->amount);
-
-    os_memmove(ctx->tx.recipient, tx->recipient, SPACEMESH_ADDRESS_SIZE);
+    ctx->tx.type = *tx++;
+    ctx->tx.nonce = u8be_read((const uint8_t *)tx);
+    tx += 8;
+    os_memmove(ctx->tx.recipient, tx, SPACEMESH_ADDRESS_SIZE);
+    tx += 20;
+    ctx->tx.gasLimit = u8be_read((const uint8_t *)tx);
+    tx += 8;
+    ctx->tx.gasPrice = u8be_read((const uint8_t *)tx);
+    tx += 8;
+    ctx->tx.amount = u8be_read((const uint8_t *)tx);
+    tx += 8;
 
     TRACE("signMessage");
     signMessage(

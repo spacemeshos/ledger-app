@@ -30,7 +30,7 @@ typedef struct {
     uint64_t amount;
 } tx_header_t;
 
-#define  SPACEMESH_TX_MIN_SIZE (sizeof(tx_header_t) + 5)
+#define  SPACEMESH_TX_MIN_SIZE (1 + 20 + 4*8)
 
 typedef struct {
     sign_tx_stage_t stage;
