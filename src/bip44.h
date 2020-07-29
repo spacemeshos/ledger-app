@@ -3,7 +3,23 @@
 
 #include "common.h"
 
-static const uint32_t BIP44_MAX_PATH_LENGTH = 10;
+/*
+Spacemesh BIP32 paths
+
+m / 44' / coin_type / [account] / 0 / [address_index]`
+
+    Account should be constant 0 for now. May be used in the future for additional functionality.
+    Coin type is 1 for a Spacemesh Testnet and 540 for Spacemesh mainent.
+    The first mainent account should be at path m / 44' / 540' / 0' / 0 / 0'.
+    The second mainent account should be at path m / 44' / 540' / 0' / 0 / 1'.
+    The first testnet account should be at path `m / 44' / 1' / 0' / 0 / 0'.
+    The second testnet account should be at path `m / 44' / 1' / 0' / 0 / 1'.
+    We have registered to have 540 for Spacemesh. see: satoshilabs/slips#943
+    address_index is int32 so there can be up to 2^32 addresses per wallet.
+    All path components should be hardened, indicated by an apostrophe char ' per bip32.
+*/
+
+static const uint32_t BIP44_MAX_PATH_LENGTH = 5;
 
 typedef struct {
     uint32_t path[BIP44_MAX_PATH_LENGTH];
@@ -17,8 +33,8 @@ static const uint32_t SMESH_COIN_TYPE = 540;
 static const uint32_t HARDENED_BIP32 = ((uint32_t) 1 << 31);
 
 size_t bip44_parse(
-        bip44_path_t* pathSpec,
-        const uint8_t* dataBuffer, size_t dataSize
+    bip44_path_t* pathSpec,
+    const uint8_t* dataBuffer, size_t dataSize
 );
 
 // Indexes into pathSpec
@@ -31,8 +47,7 @@ enum {
     BIP44_I_REST = 5,
 };
 
-
-// Checks for /44'/540'/account'
+// Checks for /44'/540'/0'/0
 bool bip44_hasValidSpacemeshPrefix(const bip44_path_t* pathSpec);
 
 bool bip44_containsAccount(const bip44_path_t* pathSpec);

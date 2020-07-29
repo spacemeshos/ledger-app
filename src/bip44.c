@@ -2,10 +2,7 @@
 #include "bip44.h"
 #include "endian.h"
 
-static const uint32_t MAX_REASONABLE_ACCOUNT = 10;
-static const uint32_t SPACEMESH_CHAIN_INTERNAL = 1;
-static const uint32_t SPACEMESH_CHAIN_EXTERNAL = 0;
-static const uint32_t MAX_REASONABLE_ADDRESS = 1000000;
+static const uint32_t MAX_REASONABLE_ADDRESS = 0xffffffff;
 
 size_t bip44_parse(
     bip44_path_t* pathSpec,
@@ -70,7 +67,7 @@ bool bip44_hasReasonableAccount(const bip44_path_t* pathSpec)
     if (!isHardened(account)) return false;
     // Un-harden
     account = account & (~HARDENED_BIP32);
-    return account < MAX_REASONABLE_ACCOUNT;
+    return 0 == account;
 }
 
 // ChainType
@@ -90,7 +87,7 @@ bool bip44_hasValidChainType(const bip44_path_t* pathSpec)
     if (!bip44_containsChainType(pathSpec)) return false;
     uint32_t chainType = bip44_getChainTypeValue(pathSpec);
 
-    return (chainType == SPACEMESH_CHAIN_INTERNAL) || (chainType == SPACEMESH_CHAIN_EXTERNAL);
+    return 0 == chainType;
 }
 
 // Address
@@ -119,9 +116,6 @@ bool bip44_containsMoreThanAddress(const bip44_path_t* pathSpec)
     return (pathSpec->length > BIP44_I_REST);
 }
 
-
-// TODO(ppershing): this function needs to be thoroughly tested
-// on small outputSize
 void bip44_printToStr(const bip44_path_t* pathSpec, char* out, size_t outSize)
 {
     ASSERT(outSize < BUFFER_SIZE_PARANOIA);
@@ -135,12 +129,8 @@ void bip44_printToStr(const bip44_path_t* pathSpec, char* out, size_t outSize)
         ASSERT(ptr <= end); \
         STATIC_ASSERT(sizeof(end - ptr) == sizeof(size_t), "bad size_t size"); \
         size_t availableSize = (size_t) (end - ptr); \
-        /* Note(ppershing): We do not bother checking return */ \
-        /* value of snprintf as it always returns 0. */ \
-        /* Go figure out ... */ \
         snprintf(ptr, availableSize, fmt, ##__VA_ARGS__); \
         size_t res = strlen(ptr); \
-        /* TODO(better error handling) */ \
         ASSERT(res + 1 < availableSize); \
         ptr += res; \
     }

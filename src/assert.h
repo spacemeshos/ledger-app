@@ -13,8 +13,6 @@
 
 extern void assert(int cond, const char* msgStr);
 
-// Note(ppershing): I like macro-like uppercase version better
-// because it captures reader's attention.
 #define ASSERT_WITH_MSG(cond, msg) assert(cond, msg)
 
 // Helper function to check APDU request parameters

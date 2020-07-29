@@ -5,6 +5,7 @@
 #include "handlers.h"
 #include "bip44.h"
 #include "spacemesh.h"
+#include "keyDerivation.h"
 
 typedef enum {
     SIGN_STAGE_NONE = 0,
@@ -25,16 +26,20 @@ typedef struct {
     uint64_t nonce; // Account Nonce
     uint8_t  recipient[SPACEMESH_ADDRESS_SIZE];
     uint64_t gasLimit;
-    uint64_t fee;
+    uint64_t gasPrice;
     uint64_t amount;
 } tx_header_t;
+
+#define  SPACEMESH_TX_MIN_SIZE (sizeof(tx_header_t) + 5)
 
 typedef struct {
     sign_tx_stage_t stage;
 
     tx_header_t  tx;
-    uint8_t      signature[64];
-    uint8_t      signer[SPACEMESH_ADDRESS_SIZE];
+    struct {
+        uint8_t      signature[64];
+        uint8_t      pubkey[PUBLIC_KEY_SIZE];
+    } response;
     bip44_path_t signerPath;
     int ui_step;
 } ins_sign_tx_context_t;

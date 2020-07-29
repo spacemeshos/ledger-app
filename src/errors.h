@@ -18,7 +18,6 @@ enum {
 	ERR_UNKNOWN_INS                = 0x6E03,
 	// TODO(should we move this to ERR_INVALID_STATE) ?
 	ERR_STILL_IN_CALL              = 0x6E04,
-	// TODO(ppershing): move payload to ERR_INVALID_DATA
 	// P1, P2 or payload is invalid
 	ERR_INVALID_REQUEST_PARAMETERS = 0x6E05,
 	// Request is not valid in the context of previous calls

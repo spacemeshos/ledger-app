@@ -85,7 +85,7 @@ void respond_with_user_reject();
 
 extern displayState_t displayState;
 
-// WARNING(ppershing): Following two references MUST be declared `static`
+// Following two references MUST be declared `static`
 // otherwise the Ledger will crash. I am really not sure why is this
 // but it might be related to position-independent-code compilation.
 static paginatedTextState_t* paginatedTextState = &(displayState.paginatedText);

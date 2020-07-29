@@ -25,6 +25,11 @@
 #define SIZEOF(var) \
     (sizeof(var) + SIZEOF_NOT_A_PTR(var))
 
+// Helper functions for ranges
+#define BEGIN(buf) buf
+// Note: SIZEOF would not work if buf is not uin8_t*
+#define END(buf) (buf + ARRAY_LEN(buf))
+
 // Any buffer claiming to be longer than this is a bug
 // (we anyway have only 4KB of memory)
 #define BUFFER_SIZE_PARANOIA 1024

@@ -33,7 +33,7 @@ static void getAddress_handleReturn(uint8_t p2, uint8_t* data, size_t dataSize)
     TRACE();
     VALIDATE(p2 == 0, ERR_INVALID_REQUEST_PARAMETERS);
 
-    // Parse wire
+    // Parse data
     size_t parsedSize = bip44_parse(&ctx->pathSpec, data, dataSize);
 
     if (parsedSize != dataSize) {
@@ -125,7 +125,7 @@ static void getAddress_handleDisplay(uint8_t p2, uint8_t* data, size_t dataSize)
     TRACE();
     VALIDATE(p2 == 0, ERR_INVALID_REQUEST_PARAMETERS);
 
-    // Parse wire
+    // Parse data
     size_t parsedSize = bip44_parse(&ctx->pathSpec, data, dataSize);
 
     if (parsedSize != dataSize) {

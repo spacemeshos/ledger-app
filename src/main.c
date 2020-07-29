@@ -112,8 +112,8 @@ static void spacemesh_main(void)
 
                 VALIDATE(device_is_unlocked(), ERR_DEVICE_LOCKED);
 
-                // Note(ppershing): unsafe to access before checks
-                // Warning(ppershing): in case of unlikely change of APDU format
+                // unsafe to access before checks
+                // in case of unlikely change of APDU format
                 // make sure you read wider values as big endian
                 struct {
                     uint8_t cla;
@@ -163,11 +163,11 @@ static void spacemesh_main(void)
             }
             CATCH(ERR_ASSERT)
             {
-                // Note(ppershing): assertions should not auto-respond
-                #ifdef RESET_ON_CRASH
+                // assertions should not auto-respond
+#ifdef RESET_ON_CRASH
                 // Reset device
                 io_seproxyhal_se_reset();
-                    #endif
+#endif
             }
             CATCH_OTHER(e)
             {
@@ -177,10 +177,10 @@ static void spacemesh_main(void)
                     ui_idle();
                 } else {
                     PRINTF("Uncaught error %x", (unsigned) e);
-                    #ifdef RESET_ON_CRASH
+#ifdef RESET_ON_CRASH
                     // Reset device
                     io_seproxyhal_se_reset();
-                    #endif
+#endif
                 }
             }
             FINALLY {
