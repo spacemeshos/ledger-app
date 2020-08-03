@@ -9,7 +9,9 @@
 
 typedef enum {
     SIGN_STAGE_NONE = 0,
-    SIGN_STAGE_CONFIRM = 42,
+    SIGN_STAGE_INIT = 42,
+    SIGN_STAGE_DATA,
+    SIGN_STAGE_CONFIRM,
 } sign_tx_stage_t;
 
 typedef enum {
@@ -36,6 +38,7 @@ typedef struct {
     sign_tx_stage_t stage;
 
     tx_header_t  tx;
+    cx_sha512_t  hash;
     struct {
         uint8_t      signature[64];
         uint8_t      pubkey[PUBLIC_KEY_SIZE];

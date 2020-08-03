@@ -12,6 +12,12 @@
 static ins_sign_tx_context_t* ctx = &(instructionState.signTxContext);
 
 enum {
+    P1_HAS_HEADER  = 0x01,
+    P1_HAS_DATA    = 0x02,
+    P1_IS_LAST     = 0x04,
+};
+
+enum {
     TXSIGN_STEP_STEP_WARNING = 100,
     TXSIGN_STEP_DISPLAY_TYPE,
     TXSIGN_STEP_DISPLAY_AMOUNT,
@@ -203,48 +209,82 @@ void signTx_handleAPDU(
         bool isNewCall
 )
 {
+    bool isProcessed = false;
+    const uint8_t *txData = data;
+
     if (isNewCall) {
         os_memset(ctx, 0, SIZEOF(*ctx));
         ctx->stage = SIGN_STAGE_NONE;
     }
 
-    // Validate params
-    VALIDATE(p1 == 0, ERR_INVALID_REQUEST_PARAMETERS);
     VALIDATE(p2 == 0, ERR_INVALID_REQUEST_PARAMETERS);
 
-    // Parse data
-    size_t pathSize = bip44_parse(&ctx->signerPath, data, dataSize);
+    if (p1 & P1_HAS_HEADER) {
 
-    size_t txSize = dataSize - pathSize;
-    if (txSize < SPACEMESH_TX_MIN_SIZE) {
-        THROW(ERR_INVALID_DATA);
+        VALIDATE(ctx->stage == SIGN_STAGE_NONE, ERR_INVALID_STATE);
+
+        ctx->stage = SIGN_STAGE_INIT;
+
+        size_t pathSize = bip44_parse(&ctx->signerPath, data, dataSize);
+
+        dataSize -= pathSize;
+        if (dataSize < SPACEMESH_TX_MIN_SIZE) {
+            THROW(ERR_INVALID_DATA);
+        }
+
+        txData = data + pathSize;
+
+        data += pathSize;
+
+        ctx->tx.type = *data++;
+        ctx->tx.nonce = u8be_read(data);
+        data += 8;
+        os_memmove(ctx->tx.recipient, data, SPACEMESH_ADDRESS_SIZE);
+        data += 20;
+        ctx->tx.gasLimit = u8be_read(data);
+        data += 8;
+        ctx->tx.gasPrice = u8be_read(data);
+        data += 8;
+        ctx->tx.amount = u8be_read(data);
+        data += 8;
+
+        cx_sha512_init(&ctx->hash);
+
+        ctx->stage = SIGN_STAGE_DATA;
+
+        isProcessed = true;
     }
 
-    const uint8_t *encodedTx = data + pathSize;
+    if (p1 & P1_HAS_DATA) {
 
-    const uint8_t *tx = data + pathSize;
+        VALIDATE(ctx->stage == SIGN_STAGE_DATA, ERR_INVALID_STATE);
 
-    ctx->tx.type = *tx++;
-    ctx->tx.nonce = u8be_read((const uint8_t *)tx);
-    tx += 8;
-    os_memmove(ctx->tx.recipient, tx, SPACEMESH_ADDRESS_SIZE);
-    tx += 20;
-    ctx->tx.gasLimit = u8be_read((const uint8_t *)tx);
-    tx += 8;
-    ctx->tx.gasPrice = u8be_read((const uint8_t *)tx);
-    tx += 8;
-    ctx->tx.amount = u8be_read((const uint8_t *)tx);
-    tx += 8;
+        cx_hash(&ctx->hash, 0, txData, dataSize, NULL, 0);
+        isProcessed = true;
+    }
 
-    TRACE("signMessage");
-    signMessage(
-        &ctx->signerPath,
-        encodedTx, dataSize - pathSize,
-        ctx->response.signature, SIZEOF(ctx->response.signature),
-        ctx->response.pubkey, SIZEOF(ctx->response.pubkey)
-    );
+    if (p1 & P1_IS_LAST) {
+        uint8_t hash[CX_SHA512_SIZE];
 
-    ctx->ui_step = TXSIGN_STEP_DISPLAY_TYPE;
+        VALIDATE(ctx->stage == SIGN_STAGE_DATA, ERR_INVALID_STATE);
 
-    signTx_ui_runStep();
+        cx_hash(&ctx->hash, CX_LAST, txData, dataSize, hash, sizeof(hash));
+
+        signMessage(
+            &ctx->signerPath,
+            hash, sizeof(hash),
+            ctx->response.signature, SIZEOF(ctx->response.signature),
+            ctx->response.pubkey, SIZEOF(ctx->response.pubkey)
+        );
+
+        ctx->stage = SIGN_STAGE_CONFIRM;
+        ctx->ui_step = TXSIGN_STEP_DISPLAY_TYPE;
+        isProcessed = true;
+
+        signTx_ui_runStep();
+    }
+
+    if (!isProcessed) {
+        THROW(ERR_INVALID_REQUEST_PARAMETERS);
+    }
 }

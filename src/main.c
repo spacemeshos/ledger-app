@@ -145,7 +145,7 @@ static void spacemesh_main(void)
                     currentInstruction = header->ins;
                 } else
                 {
-                    VALIDATE(header->ins == currentInstruction, ERR_STILL_IN_CALL);
+                    VALIDATE(header->ins == currentInstruction, ERR_INVALID_STATE);
                 }
 
                 // Note: handlerFn is responsible for calling io_send
