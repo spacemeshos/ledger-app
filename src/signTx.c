@@ -232,11 +232,12 @@ void signTx_handleAPDU(
             THROW(ERR_INVALID_DATA);
         }
 
-        txData = data + pathSize;
-
         data += pathSize;
 
         ctx->tx.type = *data++;
+        txData = data;
+        dataSize--;
+
         ctx->tx.nonce = u8be_read(data);
         data += 8;
         os_memmove(ctx->tx.recipient, data, SPACEMESH_ADDRESS_SIZE);
@@ -259,7 +260,7 @@ void signTx_handleAPDU(
 
         VALIDATE(ctx->stage == SIGN_STAGE_DATA, ERR_INVALID_STATE);
 
-        cx_hash(&ctx->hash, 0, txData, dataSize, NULL, 0);
+        cx_hash((cx_hash_t *)&ctx->hash, 0, txData, dataSize, NULL, 0);
         isProcessed = true;
     }
 
@@ -268,7 +269,7 @@ void signTx_handleAPDU(
 
         VALIDATE(ctx->stage == SIGN_STAGE_DATA, ERR_INVALID_STATE);
 
-        cx_hash(&ctx->hash, CX_LAST, txData, dataSize, hash, sizeof(hash));
+        cx_hash((cx_hash_t *)&ctx->hash, CX_LAST, txData, dataSize, hash, sizeof(hash));
 
         signMessage(
             &ctx->signerPath,
@@ -282,9 +283,14 @@ void signTx_handleAPDU(
         isProcessed = true;
 
         signTx_ui_runStep();
+
+        return;
     }
 
-    if (!isProcessed) {
+    if (isProcessed) {
+        // respond
+        io_send_buf(SUCCESS, NULL, 0);
+    } else {
         THROW(ERR_INVALID_REQUEST_PARAMETERS);
     }
 }
