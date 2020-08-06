@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "securityPolicy.h"
 
 typedef void ui_callback_fn_t();
 
@@ -26,9 +25,6 @@ typedef struct {
 	char fullText[200];
 	size_t scrollIndex;
 	ui_callback_t callback;
-	#ifdef HEADLESS
-	bool headlessShouldRespond;
-	#endif
 } paginatedTextState_t;
 
 typedef struct {
@@ -36,9 +32,6 @@ typedef struct {
 	char header[30];
 	char text[30];
 	ui_callback_t callback;
-	#ifdef HEADLESS
-	bool headlessShouldRespond;
-	#endif
 } promptState_t;
 
 typedef union {
@@ -55,14 +48,6 @@ void ui_displayPaginatedText(
         ui_callback_fn_t* callback);
 
 void ui_displayPrompt(
-        const char* headerStr,
-        const char* bodyStr,
-        ui_callback_fn_t* confirm,
-        ui_callback_fn_t* reject
-);
-
-void ui_checkUserConsent(
-        security_policy_t policy,
         const char* headerStr,
         const char* bodyStr,
         ui_callback_fn_t* confirm,
@@ -115,7 +100,6 @@ static inline void ui_crash_handler()
 		} \
 		CATCH_OTHER(e) \
 		{ \
-			TRACE("Error %d\n", (int) e); \
 			ui_crash_handler(); \
 		} \
 		FINALLY { \

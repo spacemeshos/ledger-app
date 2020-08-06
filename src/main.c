@@ -176,7 +176,6 @@ static void spacemesh_main(void)
                     flags = IO_ASYNCH_REPLY;
                     ui_idle();
                 } else {
-                    PRINTF("Uncaught error %x", (unsigned) e);
 #ifdef RESET_ON_CRASH
                     // Reset device
                     io_seproxyhal_se_reset();

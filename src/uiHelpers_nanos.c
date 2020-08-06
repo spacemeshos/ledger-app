@@ -3,18 +3,7 @@
 
 #include <os_io_seproxyhal.h>
 #include "uiHelpers.h"
-
-#ifdef HEADLESS
-#define HEADLESS_UI_ELEMENT() \
-	{ \
-		{ \
-			BAGL_LABELINE,ID_HEADLESS, 0, 12, 128, \
-			12,0,0,0,0xFFFFFF,0, \
-			BAGL_FONT_OPEN_SANS_REGULAR_11px|BAGL_FONT_ALIGNMENT_LEFT,0 \
-		}, \
-		"HEADLESS ",0,0,0,NULL,NULL,NULL \
-	}
-#endif
+#include "common.h"
 
 enum {
 	ID_UNSPECIFIED = 0x00,
@@ -22,8 +11,6 @@ enum {
 	ID_ICON_GO_RIGHT = 0x02,
 	ID_ICON_CONFIRM = 0x03,
 	ID_ICON_REJECT = 0x04,
-
-	ID_HEADLESS = 0xff,
 };
 
 static const bagl_element_t ui_busy[] = {
@@ -133,9 +120,6 @@ static const bagl_element_t ui_paginatedText[] = {
 
 	UI_TEXT(ID_UNSPECIFIED, 0, 12, 128, &displayState.paginatedText.header),
 	UI_TEXT(ID_UNSPECIFIED, 0, 26, 128, &displayState.paginatedText.currentText),
-	#ifdef HEADLESS
-	HEADLESS_UI_ELEMENT(),
-	#endif
 };
 
 static const bagl_element_t* ui_prepro_paginatedText(const bagl_element_t *element)
@@ -146,13 +130,13 @@ static const bagl_element_t* ui_prepro_paginatedText(const bagl_element_t *eleme
 	bool textFitsSinglePage = strlen(ctx->currentText) >= strlen(ctx->fullText);
 	switch (element->component.userid) {
 	case ID_ICON_GO_LEFT:
-		return (ctx->scrollIndex != 0 || textFitsSinglePage)
+		return (ctx->scrollIndex != 0 && !textFitsSinglePage)
 		       ? element
 		       : NULL;
 	case ID_ICON_GO_RIGHT:
 		return ((ctx->scrollIndex + SIZEOF(ctx->currentText)
 		         < strlen(ctx->fullText) + 1)
-		        || textFitsSinglePage)
+		        && !textFitsSinglePage)
 		       ? element
 		       : NULL;
 	default:
@@ -174,9 +158,6 @@ static const bagl_element_t ui_prompt[] = {
 	UI_ICON_RIGHT(ID_ICON_CONFIRM, BAGL_GLYPH_ICON_CHECK),
 	UI_TEXT(ID_UNSPECIFIED, 0, 12, 128, displayState.prompt.header),
 	UI_TEXT(ID_UNSPECIFIED, 0, 26, 128, displayState.prompt.text),
-	#ifdef HEADLESS
-	HEADLESS_UI_ELEMENT(),
-	#endif
 };
 
 static const bagl_element_t* ui_prepro_prompt(const bagl_element_t *element)

@@ -15,10 +15,6 @@ void nanos_clear_timer()
 
 void nanos_set_timer(int ms, timeout_callback_fn_t* cb)
 {
-	// if TRACE() is enabled, set_timer must be called
-	// before ui_ methods, because it causes Ledger Nano S
-	// to freeze in debug mode
-	// TRACE();
 	ASSERT(timeout_cb == NULL);
 	ASSERT(ms >= 0);
 	timeout_cb = cb;
@@ -107,7 +103,6 @@ unsigned char io_event(unsigned char channel MARK_UNUSED)
 
 	case SEPROXYHAL_TAG_TICKER_EVENT:
 		UX_TICKER_EVENT(G_io_seproxyhal_spi_buffer, {
-			TRACE("timer");
 			HANDLE_UX_TICKER_EVENT(UX_ALLOWED);
 		});
 		break;

@@ -4,7 +4,6 @@
 #include "assert.h"
 #include "io.h"
 #include "utils.h"
-#include "securityPolicy.h"
 
 displayState_t displayState;
 
@@ -70,59 +69,6 @@ void uiCallback_reject(ui_callback_t* cb)
 	}
 }
 
-#ifdef HEADLESS
-static int HEADLESS_DELAY = 100;
-
-void ui_displayPrompt_headless_cb(bool ux_allowed)
-{
-	TRACE("HEADLESS response");
-	if (!ux_allowed) {
-		TRACE("No UX allowed, ignoring headless cb!");
-		return;
-	}
-	TRY_CATCH_UI({
-		assert_uiPrompt_magic();
-		ASSERT(io_state == IO_EXPECT_UI);
-		ASSERT(device_is_unlocked() == true);
-		uiCallback_confirm(&promptState->callback);
-	})
-}
-
-void autoconfirmPrompt()
-{
-	#if defined(TARGET_NANOS)
-	nanos_set_timer(HEADLESS_DELAY, ui_displayPrompt_headless_cb);
-	#elif defined(TARGET_NANOX)
-	UX_CALLBACK_SET_INTERVAL(HEADLESS_DELAY);
-	#endif
-}
-
-void ui_displayPaginatedText_headless_cb(bool ux_allowed)
-{
-	TRACE("HEADLESS response");
-	if (!ux_allowed) {
-		TRACE("No UX allowed, ignoring headless cb!");
-		return;
-	}
-	TRY_CATCH_UI({
-		assert_uiPaginatedText_magic();
-		ASSERT(io_state == IO_EXPECT_UI);
-		ASSERT(device_is_unlocked() == true);
-		uiCallback_confirm(&paginatedTextState->callback);
-	});
-}
-
-void autoconfirmPaginatedText()
-{
-	#if defined(TARGET_NANOS)
-	nanos_set_timer(HEADLESS_DELAY, ui_displayPaginatedText_headless_cb);
-	#elif defined(TARGET_NANOX)
-	UX_CALLBACK_SET_INTERVAL(HEADLESS_DELAY);
-	#endif
-}
-
-#endif
-
 static void uiCallback_init(ui_callback_t* cb, ui_callback_fn_t* confirm, ui_callback_fn_t* reject)
 {
 	cb->state = CALLBACK_NOT_RUN;
@@ -156,12 +102,6 @@ void ui_displayPrompt(
 	io_state = IO_EXPECT_UI;
 
 	ui_displayPrompt_run();
-
-	#ifdef HEADLESS
-	if (confirm) {
-		autoconfirmPrompt();
-	}
-	#endif
 }
 
 void ui_displayPaginatedText(
@@ -169,7 +109,6 @@ void ui_displayPaginatedText(
         const char* bodyStr,
         ui_callback_fn_t* callback)
 {
-	TRACE();
 	paginatedTextState_t* ctx = paginatedTextState;
 	size_t header_len = strlen(headerStr);
 	size_t body_len = strlen(bodyStr);
@@ -194,18 +133,10 @@ void ui_displayPaginatedText(
 
 	uiCallback_init(&ctx->callback, callback, NULL);
 	ctx->initMagic = INIT_MAGIC_PAGINATED_TEXT;
-	TRACE("setting timeout");
-	TRACE("done");
 	ASSERT(io_state == IO_EXPECT_NONE || io_state == IO_EXPECT_UI);
 	io_state = IO_EXPECT_UI;
 
 	ui_displayPaginatedText_run();
-
-	#ifdef HEADLESS
-	if (callback) {
-		autoconfirmPaginatedText();
-	}
-	#endif
 }
 
 void respond_with_user_reject()

@@ -83,7 +83,7 @@ size_t str_formatSmeshAmount(
     size_t rawSize = (size_t) (ptr - scratchBuffer);
 
     if (rawSize + 1 > outSize) {
-        THROW(ERR_DATA_TOO_LARGE);
+        THROW(ERR_INVALID_DATA);
     }
 
     // Copy reversed & append terminator
@@ -97,7 +97,6 @@ size_t str_formatSmeshAmount(
 
 static void signTx_ui_runStep()
 {
-    TRACE("step %d", ctx->ui_step);
     ui_callback_fn_t* this_fn = signTx_ui_runStep;
 
     UI_STEP_BEGIN(ctx->ui_step);
@@ -174,11 +173,11 @@ static void signTx_ui_runStep()
         );
     }
     UI_STEP(TXSIGN_STEP_DISPLAY_SIGNER) {
-        char pathStr[100];
-        bip44_printToStr(&ctx->signerPath, pathStr, SIZEOF(pathStr));
+        char addressStr[48];
+        bin2hex(addressStr, ctx->response.pubkey, SPACEMESH_ADDRESS_SIZE);
         ui_displayPaginatedText(
             "Signer",
-            pathStr,
+            addressStr,
             this_fn
         );
     }
@@ -191,8 +190,6 @@ static void signTx_ui_runStep()
         );
     }
     UI_STEP(TXSIGN_STEP_RESPOND) {
-        TRACE("io_send_buf");
-
         io_send_buf(SUCCESS, (uint8_t*)&ctx->response, SIZEOF(ctx->response));
         ui_displayBusy(); // needs to happen after I/O
         // We are finished

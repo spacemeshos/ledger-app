@@ -19,7 +19,6 @@ extern void assert(int cond, const char* msgStr);
 #define VALIDATE(cond, error) \
 	do {\
 		if (!(cond)) { \
-			PRINTF("Validation Error in %s: %d\n", __FILE__, __LINE__); \
 			THROW(error); \
 		} \
 	} while(0)
@@ -35,16 +34,5 @@ extern void assert(int cond, const char* msgStr);
 #define _FILE_LINE_ __FILE__ ":" _TO_STR2_(__LINE__)
 
 #define ASSERT(cond) assert((cond), _SHORTEN_( _FILE_LINE_, _MAX_ASSERT_LENGTH_))
-
-#if DEVEL
-#define TRACE(...) \
-	do { \
-		PRINTF("[%s:%d] ", __func__, __LINE__); \
-		PRINTF("" __VA_ARGS__); \
-		PRINTF("\n"); \
-	} while(0)
-#else
-#define TRACE(...)
-#endif
 
 #endif // __SPACEMESH_APP_ASSERT_H__

@@ -22,7 +22,6 @@ void signMessage(bip44_path_t* pathSpec,
 
     BEGIN_TRY {
         TRY {
-            TRACE("derive private key");
             derivePrivateKey(pathSpec, &chainCode, &privateKey);
 
             getPublicKey(&privateKey, &publicKey);

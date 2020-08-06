@@ -27,8 +27,6 @@ enum {
 
 	// User rejected the action
 	ERR_REJECTED_BY_USER           = 0x6E09,
-	// Ledger security policy rejected the action
-	ERR_REJECTED_BY_POLICY         = 0x6E10,
 
 	// Pin screen
 	ERR_DEVICE_LOCKED              = 0x6E11,
@@ -46,14 +44,6 @@ enum {
 	// Internal errors
 	ERR_ASSERT                = 0x4700,
 	ERR_NOT_IMPLEMENTED       = 0x4701,
-
-	// stream
-	ERR_NOT_ENOUGH_INPUT      = 0x4710,
-	ERR_DATA_TOO_LARGE        = 0x4711,
-
-	// cbor
-	ERR_UNEXPECTED_TOKEN      = 0x4720,
-
 };
 
 #endif // __SPACEMESH_APP_ERRORS_H__

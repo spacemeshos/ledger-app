@@ -3,7 +3,6 @@
 #include "getExtendedPublicKey.h"
 #include "state.h"
 #include "uiHelpers.h"
-#include "securityPolicy.h"
 
 static ins_get_ext_pubkey_context_t* ctx = &(instructionState.extPubKeyContext);
 
@@ -44,27 +43,12 @@ void getExtendedPublicKey_handleAPDU(
         THROW(ERR_INVALID_DATA);
     }
 
-    // Check security policy
-//    security_policy_t policy = policyForGetExtendedPublicKey(&ctx->pathSpec);
-//    ENSURE_NOT_DENIED(policy);
-
     // Calculation
     deriveExtendedPublicKey(
         & ctx->pathSpec,
         & ctx->extPubKey
     );
     ctx->responseReadyMagic = RESPONSE_READY_MAGIC;
-/*
-    switch (policy) {
-#       define  CASE(policy, step) case policy: {ctx->ui_step = step; break;}
-        CASE(POLICY_PROMPT_WARN_UNUSUAL,    UI_STEP_WARNING);
-        CASE(POLICY_PROMPT_BEFORE_RESPONSE, UI_STEP_DISPLAY_PATH);
-        CASE(POLICY_ALLOW_WITHOUT_PROMPT,   UI_STEP_RESPOND);
-#       undef   CASE
-    default:
-        ASSERT(false);
-    }
-*/
     ctx->ui_step = UI_STEP_DISPLAY_PATH;
     getExtendedPublicKey_ui_runStep();
 }
