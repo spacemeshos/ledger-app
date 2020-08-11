@@ -232,6 +232,13 @@ void signTx_handleAPDU(
         data += pathSize;
 
         ctx->tx.type = *data++;
+
+        VALIDATE(
+            ctx->tx.type == TX_TYPE_COIN   ||
+            ctx->tx.type == TX_TYPE_APP    ||
+            ctx->tx.type == TX_TYPE_SPAWN,
+            ERR_INVALID_DATA);
+
         txData = data;
         dataSize--;
 
