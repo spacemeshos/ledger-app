@@ -16,7 +16,7 @@
 #*******************************************************************************
 
 ifeq ($(BOLOS_SDK),)
-	$(error Environment variable BOLOS_SDK is not set)
+    $(error Environment variable BOLOS_SDK is not set)
 endif
 include $(BOLOS_SDK)/Makefile.defines
 
@@ -32,9 +32,9 @@ APP_LOAD_PARAMS =--appFlags 0x240 --curve ed25519 --path "44'/540'"
 APP_LOAD_PARAMS += $(COMMON_LOAD_PARAMS)
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
-	ICONNAME=icon_ada_nanox.gif
+    ICONNAME=icon_smesh_nanox.gif
 else
-	ICONNAME=icon_ada_nanos.gif
+    ICONNAME=icon_smesh_nanos.gif
 endif
 
 ################
@@ -62,7 +62,7 @@ DEFINES   += HAVE_WEBUSB WEBUSB_URL_SIZE_B=0 WEBUSB_URL=""
 
 ## BLUETOOTH
 ifeq ($(TARGET_NAME),TARGET_NANOX)
-	DEFINES += HAVE_BLE BLE_COMMAND_TIMEOUT_MS=2000 HAVE_BLE_APDU
+    DEFINES += HAVE_BLE BLE_COMMAND_TIMEOUT_MS=2000 HAVE_BLE_APDU
 endif
 
 ## Protect stack overflows
@@ -110,20 +110,20 @@ include $(BOLOS_SDK)/Makefile.glyphs
 APP_SOURCE_PATH  += src
 SDK_SOURCE_PATH  += lib_stusb lib_stusb_impl lib_u2f
 ifeq ($(TARGET_NAME),TARGET_NANOX)
-	SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
-	SDK_SOURCE_PATH  += lib_ux
+    SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
+    SDK_SOURCE_PATH  += lib_ux
 endif
 ##############
 #   Build    #
 ##############
 load: all
-	python3 -m ledgerblue.loadApp $(APP_LOAD_PARAMS)
+    python3 -m ledgerblue.loadApp $(APP_LOAD_PARAMS)
 
 delete:
-	python3 -m ledgerblue.deleteApp $(COMMON_DELETE_PARAMS)
+    python3 -m ledgerblue.deleteApp $(COMMON_DELETE_PARAMS)
 
 seed:
-	python3 -m ledgerblue.hostOnboard --id $(NANOS_ID) --words $(WORDS) --pin $(PIN)
+    python3 -m ledgerblue.hostOnboard --id $(NANOS_ID) --words $(WORDS) --pin $(PIN)
 
 
 # import generic rules from the sdk
@@ -133,4 +133,4 @@ include $(BOLOS_SDK)/Makefile.rules
 dep/%.d: %.c Makefile
 
 listvariants:
-	@echo VARIANTS COIN spacemesh_smesh
+    @echo VARIANTS COIN spacemesh_smesh
