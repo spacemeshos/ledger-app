@@ -24,6 +24,7 @@ typedef enum {
 } tx_type_t;
 
 typedef struct {
+    uint8_t  networkId[SPACEMESH_NETWORKID_SIZE];
     uint8_t  type;
     uint64_t nonce; // Account Nonce
     uint8_t  recipient[SPACEMESH_ADDRESS_SIZE];
@@ -32,7 +33,7 @@ typedef struct {
     uint64_t amount;
 } tx_header_t;
 
-#define  SPACEMESH_TX_MIN_SIZE (1 + 20 + 4*8)
+#define  SPACEMESH_TX_MIN_SIZE (32 + 1 + 20 + 4*8)
 
 typedef struct {
     sign_tx_stage_t stage;

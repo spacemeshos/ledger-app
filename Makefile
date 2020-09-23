@@ -18,6 +18,9 @@
 ifeq ($(BOLOS_SDK),)
     $(error Environment variable BOLOS_SDK is not set)
 endif
+
+BOLOS_SDK = /home/merlin/src/spacemesh/ledger-app/dev-env/SDK/nanos-secure-sdk
+
 include $(BOLOS_SDK)/Makefile.defines
 
 APPNAME = "Spacemesh"
@@ -63,6 +66,7 @@ DEFINES   += HAVE_WEBUSB WEBUSB_URL_SIZE_B=0 WEBUSB_URL=""
 ## BLUETOOTH
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 	DEFINES += HAVE_BLE BLE_COMMAND_TIMEOUT_MS=2000 HAVE_BLE_APDU
+	DEFINES += PRINTF\(...\)=
 endif
 
 ## Protect stack overflows
@@ -86,6 +90,11 @@ DEFINES += RESET_ON_CRASH
 ##############
 #  Compiler  #
 ##############
+ifneq ($(BOLOS_ENV),)
+CLANGPATH := $(BOLOS_ENV)/clang-arm-fropi/bin/
+GCCPATH := $(BOLOS_ENV)/gcc-arm-none-eabi-5_3-2016q1/bin/
+endif
+
 CC       := $(CLANGPATH)clang
 CFLAGS   += -O3 -Os -Wall -Wextra -Wuninitialized -I/usr/include
 

@@ -230,7 +230,10 @@ void signTx_handleAPDU(
         }
 
         data += pathSize;
+        txData = data;
 
+        os_memmove(ctx->tx.networkId, data, SPACEMESH_NETWORKID_SIZE);
+        data += SPACEMESH_NETWORKID_SIZE;
         ctx->tx.type = *data++;
 
         VALIDATE(
@@ -239,13 +242,10 @@ void signTx_handleAPDU(
             ctx->tx.type == TX_TYPE_SPAWN,
             ERR_INVALID_DATA);
 
-        txData = data;
-        dataSize--;
-
         ctx->tx.nonce = u8be_read(data);
         data += 8;
         os_memmove(ctx->tx.recipient, data, SPACEMESH_ADDRESS_SIZE);
-        data += 20;
+        data += SPACEMESH_ADDRESS_SIZE;
         ctx->tx.gasLimit = u8be_read(data);
         data += 8;
         ctx->tx.gasPrice = u8be_read(data);
