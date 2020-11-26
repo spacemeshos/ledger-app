@@ -19,8 +19,6 @@ ifeq ($(BOLOS_SDK),)
     $(error Environment variable BOLOS_SDK is not set)
 endif
 
-BOLOS_SDK = /home/merlin/src/spacemesh/ledger-app/dev-env/SDK/nanos-secure-sdk
-
 include $(BOLOS_SDK)/Makefile.defines
 
 APPNAME = "Spacemesh"
