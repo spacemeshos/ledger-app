@@ -33,7 +33,7 @@ Run `udevadm control --reload` to load the changes.
 
 To build and install the app on your Ledger Nano S device you must set up the Ledger Nano S build environments.
 
-Please follow the Getting Started instructions at [here](https://ledger.readthedocs.io/en/latest/userspace/getting_started.html).
+Please follow the Getting Started instructions at [here](https://developers.ledger.com/docs/nano-app/secure-app/).
 
 If you don't want to setup a global environment, you can also setup one just for this app by sourcing `prepare-devenv.sh s`
 
