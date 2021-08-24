@@ -19,7 +19,7 @@ jobs:
       with:
         submodules: true
 
-    - run: sudo apt install python3-venv python3-dev libtinfo5 libtinfo-dev
+    - run: sudo apt install python3-venv python3-dev libtinfo5 libtinfo-dev gcc-multilib g++-multilib
     - run: sudo pip3 install ledgerblue
 
     - name: Prepare dev-environment
