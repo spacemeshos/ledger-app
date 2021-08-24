@@ -25,9 +25,6 @@ jobs:
     - name: Prepare dev-environment
       run: ./prepare-devenv.sh s
 
-    - run: echo 'BOLOS_SDK=$(pwd)/dev-env/SDK/nanos-secure-sdk' >> $GITHUB_ENV
-    - run: echo 'BOLOS_ENV=$(pwd)/dev-env/CC/others' >> $GITHUB_ENV
-
     - run: make
 
     - uses: actions/upload-artifact@v2
