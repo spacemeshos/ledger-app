@@ -9,7 +9,7 @@ static const size_t PUBLIC_KEY_SIZE =  32;
 static const size_t CHAIN_CODE_SIZE =  32;
 static const size_t EXTENDED_PUBKEY_SIZE = CHAIN_CODE_SIZE + PUBLIC_KEY_SIZE;
 
-typedef cx_ecfp_256_extended_private_key_t privateKey_t;
+typedef cx_ecfp_256_private_key_t privateKey_t;
 
 typedef struct {
     uint8_t code[CHAIN_CODE_SIZE];
