@@ -1,9 +1,6 @@
 name: Build
 
-on:
-  push:
-    branches:
-      - add-ci
+on: push
 
 jobs:
   build:
