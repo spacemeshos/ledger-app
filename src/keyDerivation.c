@@ -27,7 +27,7 @@ void derivePrivateKey(
     BEGIN_TRY {
         TRY {
             STATIC_ASSERT(CX_APILEVEL >= 5, "unsupported api level");
-            STATIC_ASSERT(SIZEOF(privateKey->d) == 64, "bad private key length");
+            STATIC_ASSERT(SIZEOF(privateKey->d) == 32, "bad private key length");
 
             io_seproxyhal_io_heartbeat();
             os_perso_derive_node_bip32(
@@ -41,8 +41,8 @@ void derivePrivateKey(
             // We should do cx_ecfp_init_private_key here, but it does not work in SDK < 1.5.4,
             // should work with the new SDK
             privateKey->curve = CX_CURVE_Ed25519;
-            privateKey->d_len = 64;
-            os_memmove(privateKey->d, privateKeyRawBuffer, 64);
+            privateKey->d_len = SIZEOF(privateKey->d);
+            os_memmove(privateKey->d, privateKeyRawBuffer, SIZEOF(privateKey->d));
         }
         FINALLY {
             os_memset(privateKeyRawBuffer, 0, SIZEOF(privateKeyRawBuffer));

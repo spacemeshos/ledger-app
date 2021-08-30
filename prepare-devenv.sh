@@ -77,3 +77,8 @@ elif [[ $1 == "x" ]]; then
     export BOLOS_SDK=$(pwd)/dev-env/SDK/nanox-secure-sdk
     export BOLOS_ENV=$(pwd)/dev-env/CC/nanox
 fi
+
+if [[ -n "${GITHUB_ACTIONS}" ]]; then
+    echo "BOLOS_SDK=$BOLOS_SDK" >> $GITHUB_ENV
+    echo "BOLOS_ENV=$BOLOS_ENV" >> $GITHUB_ENV
+fi
