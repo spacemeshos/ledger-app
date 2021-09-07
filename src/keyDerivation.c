@@ -38,11 +38,7 @@ void derivePrivateKey(
                 chainCode->code);
             io_seproxyhal_io_heartbeat();
 
-            // We should do cx_ecfp_init_private_key here, but it does not work in SDK < 1.5.4,
-            // should work with the new SDK
-            privateKey->curve = CX_CURVE_Ed25519;
-            privateKey->d_len = SIZEOF(privateKey->d);
-            os_memmove(privateKey->d, privateKeyRawBuffer, SIZEOF(privateKey->d));
+            cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyRawBuffer, 32, (cx_ecfp_private_key_t *)privateKey);
         }
         FINALLY {
             os_memset(privateKeyRawBuffer, 0, SIZEOF(privateKeyRawBuffer));
